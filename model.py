@@ -20,66 +20,64 @@ ax.set_yticks(minor_ticks, minor=True)
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')
-
 # and a corresponding grid
 ax.grid(which='both')
-
 # or if you want differnet settings for the grids:
 ax.grid(which='minor', alpha=0.2)
 ax.grid(which='major', alpha=0.5)
 
 
-# add source
-#
-# [x], [y]: x,y position
-# 'ro': red circle
-source = plt.plot([35], [25], 'ro', markersize=10)
-plt.plot([35, 75], [25, 65], color='red', linewidth=2)
-# plt.plot([35, 35], [25, 85], color='r', linewidth=2)
-
-circle1=plt.Circle((35,25),5, color='red', alpha=0.4)
-ax.add_artist(circle1)
-
-
-# add geofence
-#
-# http://matplotlib.org/api/patches_api.html
-#
-# facecolor='none': no fill
-# lw: line width
-# alpha: opacity level
-polygon = plt.Polygon([
-            [20, 10], [10, 50], [20, 80], [50, 100], [90, 90], [90, 20], [60,10], [20,10]],
-            facecolor='none',
-            edgecolor='black',
-            linewidth=2,
-            linestyle='solid',
-            alpha=0.9)
-ax.add_patch(polygon)
-
 # delta_x_wedge = np.tan(np.radians(15)) * 35
 # delta_x = np.cos(np.radians(45)) * delta_x_wedge
 # delta_y = np.sin(np.radians(45)) * delta_x_wedge
 
-fov = Wedge((35,25), 40/np.cos(np.radians(45)), 15, 75, color="red", alpha=0.5)
-# fov2 = Wedge((35,25), 60, 60, 120, color="r", alpha=0.5)
+# add geofence
+def set_geofence(x):
+    polygon = plt.Polygon(
+                x,
+                facecolor='none',
+                edgecolor='black',
+                linewidth=2,
+                linestyle='solid',
+                alpha=0.9)
+    ax.add_patch(polygon)
 
-ax.add_artist(fov)
-# ax.add_artist(fov2)
+# add wind vectors
+def set_wind_vectors(uwind,vwind):
+    U = uwind
+    V = vwind
+    Y,X = np.mgrid[5:100:10, 5:100:10]
 
-# add wind vector
-#
-#
-Y, X = np.mgrid[5:100:10, 5:100:10]
-U = 1
-V = 1
+    ax.quiver(X,Y,U,V,
+            angles='uv',
+            color='blue',
+            width=0.002,
+            headlength=5)
 
-ax.quiver(X, Y, U, V,
-           angles='xy',
-           color='blue',
-           width=0.002,
-           scale=1/0.015,
-           headlength=5)
+def set_gas_source(x,y,theta):
+    radius = 40/np.cos(np.deg2rad(45))
+    # add source
+    plt.plot([x], [y], 'ro', markersize=10)
+    plt.plot([x, x + radius * np.cos(np.deg2rad(theta))], [y, y + radius * np.sin(np.deg2rad(theta))], color='red', linewidth=2)
+    # add radius
+    circle = plt.Circle((x,y),5, color='red', alpha=0.4)
+    # add wedge
+    wedge = Wedge((x,y), radius, theta - 30, theta + 30, color="red", alpha=0.4)
+    ax.add_artist(circle)
+    ax.add_artist(wedge)
+
+
+theta = 75
+windspeed = 1
+
+u = windspeed * np.cos(np.deg2rad(theta))
+v = windspeed * np.sin(np.deg2rad(theta))
+
+set_wind_vectors(u,v)
+set_gas_source(35,25,theta)
+
+geofence = [[20, 10], [10, 50], [20, 80], [50, 100], [90, 90], [90, 20], [60,10], [20,10]]
+set_geofence(geofence)
 
 
 #plt.saveax('uav.png')
