@@ -49,10 +49,10 @@ def deg2vspeed(wdeg, wspeed):
     return wspeed * np.sin(rad)
 
 def usage():
- 	return "Usage: main.py <wdeg> <wspeed> <x-pos> <y-pos>\
- 	\nValid wdeg: wind direction according to u and v components in degrees (0deg - 360deg)\
+    return "Usage: main.py <wdeg> <wspeed> <x-pos> <y-pos>\
+    \nValid wdeg: wind direction according to u and v components in degrees (0deg - 360deg)\
     \nValid wspeed: wind speed (use: 1)\
- 	\nValid x-pos: x-value of gas leakage (0 - 100)\
+    \nValid x-pos: x-value of gas leakage (0 - 100)\
     \nValid y-pos: y-value of gas leakage (0 - 100)"
 
 if __name__ == "__main__":
